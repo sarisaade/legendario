@@ -268,7 +268,7 @@ setTimeout(() => {
 
   // Ocultar el mensaje de confirmación después de redirigir
   confirmationMessage.style.display = 'none';
-}, 2000);
+}, 100);
 // Vaciar el carrito después de la confirmación
         localStorage.removeItem('cart');
         displayCart();
