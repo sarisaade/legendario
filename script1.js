@@ -8,7 +8,6 @@ function createCard(product) {
         <button class="add-to-cart" data-id="${product.id}" data-name="${product.title}" data-price="${product.price}">Agregar al carrito</button>
     </div>`;
 }
-
 // Función para mostrar los datos en el HTML y añadir eventos de clic
 async function displayData() {
     const main = document.querySelector('.product-container');
@@ -16,8 +15,7 @@ async function displayData() {
     if (data && Array.isArray(data)) {
         main.innerHTML += data.map(createCard).join('');
     }
-
-    // Añadir eventos de clic a los nuevos botones "Agregar al carrito"
+// Añadir eventos de clic a los nuevos botones "Agregar al carrito"
     document.querySelectorAll('.add-to-cart').forEach(button => {
         button.addEventListener('click', function() {
             const productId = parseInt(button.getAttribute('data-id'));
@@ -30,25 +28,21 @@ async function displayData() {
         });
     });
 }
-
 // Función para cambiar el estado del botón
 function changeButtonState(button) {
     button.style.backgroundColor = '#4CAF50'; // Cambiar a verde
     const originalText = button.textContent;
     button.textContent = 'Producto agregado';
     button.disabled = true; // Deshabilitar el botón
-
-    // Revertir el cambio después de 5 segundos
+// Revertir el cambio después de 5 segundos
     setTimeout(() => {
         button.style.backgroundColor = '';
         button.textContent = originalText;
         button.disabled = false;
     }, 5000);
 }
-
 // Ejecutar la función al cargar la página
 document.addEventListener('DOMContentLoaded', displayData);
-
 // Función para mostrar notificación de producto agregado
 function showNotification(message) {
     const notification = document.createElement('div');
@@ -59,7 +53,6 @@ function showNotification(message) {
         document.body.removeChild(notification);
     }, 2000);
 }
-
 // Función para agregar producto al carrito
 function addToCart(productId, productName, productPrice, productTalle, productQuantity) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -80,7 +73,6 @@ function addToCart(productId, productName, productPrice, productTalle, productQu
     localStorage.setItem('cart', JSON.stringify(cart));
     displayCart();
 }
-
 // Función para eliminar una unidad del producto del carrito
 function removeFromCart(productId, productTalle) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -94,7 +86,6 @@ function removeFromCart(productId, productTalle) {
         displayCart();
     }
 }
-
 // Función para mostrar los productos en el carrito
 function displayCart() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -111,8 +102,7 @@ function displayCart() {
         cartContainer.appendChild(listItem);
     });
     updateCartTotal();
-
-    // Añadir funcionalidad a los botones de eliminación y aumento de cantidad
+// Añadir funcionalidad a los botones de eliminación y aumento de cantidad
     document.querySelectorAll('.decrease-quantity').forEach(button => {
         button.addEventListener('click', function() {
             const productId = parseInt(button.getAttribute('data-id'));
@@ -128,14 +118,12 @@ function displayCart() {
         });
     });
 }
-
 // Función para actualizar el total del carrito
 function updateCartTotal() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const cartTotal = cart.reduce((total, product) => total + (product.price * product.quantity), 0);
     document.querySelector('.cart-total').textContent = cartTotal.toFixed(2);
 }
-
 // Función para mostrar las imágenes adicionales al hacer clic en "Ver más"
 function addViewMoreButton() {
     document.querySelectorAll('.ver-mas').forEach(button => {
@@ -152,7 +140,6 @@ function addViewMoreButton() {
         });
     });
 }
-
 // Función para inicializar la página
 function initPage() {
     displayCart();
@@ -173,28 +160,23 @@ function initPage() {
             }
         });
     });
-
-    document.querySelector('.clear-cart').addEventListener('click', function() {
+document.querySelector('.clear-cart').addEventListener('click', function() {
         localStorage.removeItem('cart');
         displayCart();
     });
-
-    document.getElementById('confirmar-carrito-btn').addEventListener('click', function() {
+ document.getElementById('confirmar-carrito-btn').addEventListener('click', function() {
         document.getElementById('dialog').style.display = 'block';
     });
 
     document.getElementById('confirmation-form').addEventListener('submit', function(event) {
         event.preventDefault();
-        
-        // Validar número de teléfono
+         // Validar número de teléfono
         const phoneInput = document.getElementById('buyer-phone');
         const phonePattern = /^[0-9]{10,15}$/; // Permitir solo números de 10 a 15 dígitos
         if (!phonePattern.test(phoneInput.value)) {
             alert('Por favor, ingrese un número de teléfono válido.');
             return;
-        }
-
-        // Validar correo electrónico
+        }// Validar correo electrónico
         const emailInput = document.getElementById('buyer-email');
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(emailInput.value)) {
@@ -205,14 +187,65 @@ function initPage() {
     const buyerName = document.getElementById('buyer-name').value;
     const buyerPhone = document.getElementById('buyer-phone').value;
     const buyerEmail = document.getElementById('buyer-email').value;
-
-    // Obtener los productos del carrito
+// Obtener los productos del carrito
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     let cartDetails = `Detalles del Carrito:\n`;
     cart.forEach(product => {
         cartDetails += `${product.quantity} x ${product.name} (Talle: ${product.talle}) - Precio: $${(product.price * product.quantity).toFixed(2)}\n`;
     });
-
+    document.getElementById('comprar-btn').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevenir el envío del formulario
+    // Datos del formulario
+        const buyerName = document.getElementById('buyer-name').value;
+        const buyerPhone = document.getElementById('buyer-phone').value;
+        const buyerEmail = document.getElementById('buyer-email').value;
+     // Configuración de los parámetros de EmailJS
+        const templateParams = {
+            name: buyerName,
+            phone: buyerPhone,
+            email: buyerEmail,
+            message: 'El botón de comprar ha sido presionado.'
+        };
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar EmailJS con la Public Key
+            emailjs.init("z5kLRgpEiDGYL4lhx");
+            
+            document.getElementById('confirmation-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Validar datos del formulario
+                const buyerName = document.getElementById('buyer-name').value;
+                const buyerPhone = document.getElementById('buyer-phone').value;
+                const buyerEmail = document.getElementById('buyer-email').value;
+                
+                // Configuración de los parámetros de EmailJS
+                const templateParams = {
+                    name: buyerName,
+                    phone: buyerPhone,
+                    email: buyerEmail,
+                    message: 'El botón de comprar ha sido presionado.'
+                };
+        
+                // Enviar el correo utilizando EmailJS
+                emailjs.send('service_9olg4ok', 'template_hsl3vca', templateParams)
+                    .then(function(response) {
+                        console.log('Correo enviado exitosamente!', response.status, response.text);
+                        document.getElementById('confirmation-message').style.display = 'block';
+                    }, function(error) {
+                        console.log('Fallo en el envío del correo...', error);
+                    });
+            });
+        });
+         
+    // Enviar el correo utilizando EmailJS
+        emailjs.send('service_9olg4ok', 'template_hsl3vca', templateParams)
+            .then(function(response) {
+                console.log('Correo enviado exitosamente!', response.status, response.text);
+                document.getElementById('confirmation-message').style.display = 'block';
+            }, function(error) {
+                console.log('Fallo en el envío del correo...', error);
+            });
+    });
     // Mostrar mensaje de confirmación estilizado
 const confirmationMessage = document.getElementById('confirmation-message');
 confirmationMessage.innerHTML = `
@@ -222,7 +255,6 @@ confirmationMessage.innerHTML = `
 `;
 confirmationMessage.style.display = 'block';
 document.getElementById('dialog').style.display = 'none';
-
 // Esperar 5 segundos antes de redirigir a WhatsApp
 setTimeout(() => {
   // Mensaje a enviar por WhatsApp
@@ -237,15 +269,11 @@ setTimeout(() => {
   // Ocultar el mensaje de confirmación después de redirigir
   confirmationMessage.style.display = 'none';
 }, 2000);
-
-
-       
-        // Vaciar el carrito después de la confirmación
+// Vaciar el carrito después de la confirmación
         localStorage.removeItem('cart');
         displayCart();
     });
 }
-
 // Ejecutar la función initPage cuando el DOM esté cargado
 document.addEventListener('DOMContentLoaded', initPage);
 
