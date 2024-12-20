@@ -210,7 +210,7 @@ function initPage() {
             const buyerEmail = document.getElementById('buyer-email').value;
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
         
-            fetch('/comprar', {
+            fetch('/comprar0', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
